@@ -12,7 +12,6 @@ window.onload = function() {
 }
 
 function execute() {
-  console.log("test");
   let zip = document.getElementById("dLoc").value;
   const url = `https://api.openweathermap.org/data/2.5/weather?zip=${zip}&appid=${apiKey}`
   fetch(url)

@@ -18,6 +18,10 @@ app.get("/locus", (req,res) =>{
 	res.render("locus");
 })
 
+app.get("/compare", (req,res) =>{
+	res.render("compare");
+})
+
 app.listen(3000, "localhost", ()=>{
     console.log("Server is running on 3000");
 });

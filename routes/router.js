@@ -9,7 +9,12 @@ router.get("/", controller.travel);
 //GET "/travel": Render the Travel page 
 router.get("/travel", controller.travel);
 
+//GET "/locus": Render the Locus page 
 router.get("/locus", controller.locus);
 
+//GET "/locus": Render the Compare page 
+router.get("/compare", controller.locus);
+
+router.post("/locus", controller.locusShow);
 
 module.exports = router;

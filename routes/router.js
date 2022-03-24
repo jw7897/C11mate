@@ -12,8 +12,8 @@ router.get("/travel", controller.travel);
 //GET "/locus": Render the Locus page 
 router.get("/locus", controller.locus);
 
-//GET "/locus": Render the Compare page 
-router.get("/compare", controller.locus);
+//GET "/compare": Render the Compare page 
+router.get("/compare", controller.compare);
 
 router.post("/locus", controller.locusShow);
 

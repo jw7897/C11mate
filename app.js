@@ -9,10 +9,6 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 app.use("/", router);
 
-app.get("/compare", (req,res) =>{
-	res.render("compare");
-})
-
 app.listen(3000, "localhost", ()=>{
     console.log("Server is running on 3000");
 });

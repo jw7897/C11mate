@@ -12,7 +12,7 @@ exports.locus = (request, response) => {
 };
 
 exports.compare = (request, response) => {
-    response.render("locus.ejs");
+    response.render("compare.ejs");
 };
 
 exports.locusShow = (request, response) =>{

@@ -5,14 +5,14 @@ body{
 h1{
     color: white;
     text-align: center;
-    font-size: 100px;
+    font-size: 75px;
     margin: 0px;
 }
 
 /* Navigation bar*/
 h2{
     text-align: center;
-    font-size: 60px;
+    font-size: 50px;
     margin: 0px;
     color: white;
     margin-bottom: 10px;
@@ -30,13 +30,13 @@ a:hover {
 }
 /* Middle Box */
 .content{
-    padding-top: 120px;
+    padding-top: 60px;
     background-color: white;
     display: block;
     margin-left: auto;
     margin-right: auto;
     width: 70%;
-    height: 70%;
+    padding-bottom: 90px;
     text-align: center;
     font-size:30px;
 }

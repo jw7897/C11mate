@@ -1,19 +1,14 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/index.css">
+<%- include("./partials/header.ejs") %>
     <title>Compare</title>
 </head>
 <body>
     <h1>C11MATE</h1>
-    <h2><a href="/travel">Travel Mode</a> | <a href="/locus">Locus Mode</a> | <a class = "active"  href="/compare">Compare Mode</a></h2>
+    <h2><a href="/travel">Travel Mode</a> | <a href="/locus">Locus Mode</a> | <a class="active" href="/compare">Compare Mode</a></h2>
     <div class="content" id="content">
         <label for="fZip">First Zip</label><br>
-        <input type="text" id="fZip" name="fZip" placeholder="Enter a Zip Code Here..."><br><br>
+        <input type="text" id="fZip" name="fZip" placeholder="Enter a Zip Code or City Here..."><br><br>
         <label for="sZip">Second Zip</label><br>
-        <input type="text" id="sZip" name="sZip" placeholder="Enter a Zip Code Here..."><br><br>
+        <input type="text" id="sZip" name="sZip" placeholder="Enter a Zip Code or City Here..."><br><br>
         <input type="submit" value="Submit" id="submit">
     </div>
 
@@ -25,4 +20,4 @@
 </body>
 </html>
 
-<script src="js/compare.js"></script>
+<!--<script src="js/compare.js"></script>-->

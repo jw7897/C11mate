@@ -17,4 +17,7 @@ router.get("/compare", controller.compare);
 
 router.post("/locus", controller.locusShow);
 
+router.post("/travel", controller.travelShow);
+
+
 module.exports = router;

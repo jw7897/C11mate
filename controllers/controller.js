@@ -9,9 +9,6 @@ const dateFormat = require("fecha"); //Node Module used to format the date.
 const fetch = require("node-fetch");
 const cities = require('cities');
 
-
-const forecast = require("weather-js");
-
 //GET "/" & GET "/travel": Render the Travel page when the user accesses the home page.
 exports.travel = (request, response) => {
     response.render("travel.ejs");

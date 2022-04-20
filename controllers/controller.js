@@ -6,6 +6,11 @@ weather.setUnits('metric');
 
 const forecast = require("weather-js"); //Node Module used to get the 3 day weather forecast.
 const dateFormat = require("fecha"); //Node Module used to format the date.
+const fetch = require("node-fetch");
+const cities = require('cities');
+
+
+const forecast = require("weather-js");
 
 //GET "/" & GET "/travel": Render the Travel page when the user accesses the home page.
 exports.travel = (request, response) => {
@@ -68,3 +73,49 @@ exports.locusShow = (request, response) =>{
     });
 
 }
+
+
+exports.travelShow = (request, response) => {
+    let dLoc = request.body.dLoc;
+    let sLoc = request.body.sLoc;
+    function cityInfo(city,lat,lng) {
+        this.city = city;
+        this.lat = lat;
+        this.lng = lng;
+    }
+    function tripInfo(city,temperature){
+        this.city = city;
+        this.temperature = temperature;
+    }
+    let cityNames =[];
+    let cityDetails=[];
+    let cityFinal = [];
+    fetch(`https://open.mapquestapi.com/directions/v2/route?key=AupiTAGIpeSPK9QKImU2KAltgKBqAGwJ&from=${sLoc}&to=${dLoc}`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        for (let i = 0; i < res.route.legs[0].maneuvers.length; i++) {
+            if(!cityNames.includes(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city) && cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city != ""){
+                cityNames.push(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city)
+                cityDetails.push(new cityInfo(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city,res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng ));
+            }
+        }
+        console.log(cityNames);
+        cityFinal = Array(cityDetails.length).fill('a');
+        for (let i = 0; i < cityDetails.length; i++) {
+            weather.setCoordinate(cityDetails[i].lat, cityDetails[i].lng);
+            weather.getTemperature(function(err, temp) {
+            cityFinal[i] = new tripInfo(cityDetails[i].city,temp);
+            if(!cityFinal.includes('a')){
+                response.render("travel.ejs", {tripWeatherData: cityFinal});
+            }
+            });
+          }      
+                
+    })
+    .catch((err) => {
+        console.log(err);
+      });
+      return;
+  }

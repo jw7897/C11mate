@@ -13,16 +13,19 @@
             <input type="text" id="dLoc" name="dLoc" placeholder="Enter a City or Zip Code Here..."><br>
             <input type="submit" value="Submit" id="submit">
         </form>
-
+      
         <% if(locals.tripWeatherData){ %> 
+         <img src= "/images_for_weather/polyline.png"><br>
          <%for(let i=0; i<tripWeatherData.length; i++){ %>        
-            <strong><%= tripWeatherData[i].city %></strong><br>
-            <strong>Temperature: </strong> <%= (tripWeatherData[i].temperature * (9/5) + 32).toFixed(0) %>&deg; F / <%= tripWeatherData[i].temperature.toFixed(0) %>&deg; C<br><br>
+            <strong><%= tripWeatherData[i].city + " " %></strong>
+            <%= (tripWeatherData[i].temperature) %>&deg; F / <%= ((tripWeatherData[i].temperature-32)*.5556).toFixed(0) %>&deg; C<br>
+            <strong><%= tripWeatherData[i].desc %></strong>
+            <img src= "<%= (tripWeatherData[i].image)%>""><br>
+            <strong>Percipiation Chance Today: <%= tripWeatherData[i].pChance %></strong><br><br>
             <% } %> 
             <% } %> 
 
     </div>c
 </body>
 </html>
-
 <!--<script src="js/locus.js"></script>-->

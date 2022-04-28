@@ -87,9 +87,12 @@ exports.travelShow = (request, response) => {
         this.lat = lat;
         this.lng = lng;
     }
-    function tripInfo(city,temperature){
+    function tripInfo(city,temperature,desc,pChance,image){
         this.city = city;
         this.temperature = temperature;
+        this.desc = desc;
+        this.pChance = pChance;
+        this.image = image;
     }
     let cityNames =[];
     let cityDetails=[];
@@ -98,26 +101,40 @@ exports.travelShow = (request, response) => {
       .then((res) => {
         return res.json();
       })
-      .then((res) => {
+      .then(async (res) => {
+          //Gets each unique city name in trip
         for (let i = 0; i < res.route.legs[0].maneuvers.length; i++) {
             if(!cityNames.includes(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city) && cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city != ""){
                 cityNames.push(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city)
                 cityDetails.push(new cityInfo(cities.gps_lookup(res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng).city,res.route.legs[0].maneuvers[i].startPoint.lat, res.route.legs[0].maneuvers[i].startPoint.lng ));
             }
         }
-        console.log(cityNames);
+
+        //Creates map with starting city and destination city
+        let line = {
+            coords: [
+              [cityDetails[0].lng,cityDetails[0].lat],
+              [cityDetails[cityDetails.length-1].lng,cityDetails[cityDetails.length-1].lat]
+            ],
+            color: '#0000FFBB',
+            width: 3
+          };
+          map.addLine(line);
+          await map.render();
+          await map.image.save('public/images_for_weather/polyline.png');
+
+        //Gets weather informationf or each city
         cityFinal = Array(cityDetails.length).fill('a');
         for (let i = 0; i < cityDetails.length; i++) {
-            weather.setCoordinate(cityDetails[i].lat, cityDetails[i].lng);
-            weather.getTemperature(function(err, temp) {
-            cityFinal[i] = new tripInfo(cityDetails[i].city,temp);
-            if(!cityFinal.includes('a')){
-                response.render("travel.ejs", {tripWeatherData: cityFinal});
-            }
-            });
-          }      
-                
+            forecast.find({search:  cityDetails[i].city, degreeType: 'F'}, function(err, data) {
+                cityFinal[i] = new tripInfo(cityDetails[i].city, data[0].current.temperature,data[0].current.skytext, data[0].forecast[1].precip, data[0].current.imageUrl);              
+                if(!cityFinal.includes('a')){
+                    response.render("travel.ejs", {tripWeatherData: cityFinal});
+                }
+            });           
+             }
     })
+
     .catch((err) => {
         console.log(err);
       });

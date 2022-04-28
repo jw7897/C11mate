@@ -33,7 +33,11 @@ exports.locusShow = (request, response) =>{
     let dLoc = request.body.dLoc;   //Stores the input from the user.
     let dateArray = [];     //Stores the date array returned from the forecast API after the string is split. Example: ["2021", "1", "4"]
 
-    weather.setZipCode(null);   //Makes sure that previous requests made with zip codes are not kept in weather.
+    //Makes sure that previous requests information are not kept in weather.
+    weather.setZipCode(null);   
+    weather.setCity("");
+	weather.setCoordinate(null, null);
+	weather.setCityId(null);
 
     //If the user enters a 5-digit zip code, set the weather to be called to be the zipcode entered. Else, set the city to be returned.
     if(dLoc.match(/\d{5}/)){
@@ -75,6 +79,9 @@ exports.locusShow = (request, response) =>{
 exports.travelShow = (request, response) => {
     let dLoc = request.body.dLoc;
     let sLoc = request.body.sLoc;
+
+    weather.setCoordinate(null, null);    //Makes sure that previous requests made with coordinates are not kept in weather.
+
     function cityInfo(city,lat,lng) {
         this.city = city;
         this.lat = lat;

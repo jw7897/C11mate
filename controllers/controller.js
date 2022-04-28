@@ -15,7 +15,8 @@ const options = {
     width: 600,
     height: 400,
   };
-const map = new StaticMaps(options);
+let map = new StaticMaps(options);
+
 
 
 //GET "/" & GET "/travel": Render the Travel page when the user accesses the home page.
@@ -71,6 +72,12 @@ exports.travelShow = (request, response) => {
     let cityNames =[];
     let cityDetails=[];
     let cityFinal = [];
+
+    if(dLoc == "" || sLoc == ""){
+        console.error("etst");
+        return;
+    }
+
     fetch(`https://open.mapquestapi.com/directions/v2/route?key=AupiTAGIpeSPK9QKImU2KAltgKBqAGwJ&from=${sLoc}&to=${dLoc}`)
       .then((res) => {
         return res.json();

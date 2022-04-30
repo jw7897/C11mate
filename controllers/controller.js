@@ -13,7 +13,23 @@ const options = {
     width: 600,
     height: 400,
   };
-let map = new StaticMaps(options);
+  let map = new StaticMaps(options);
+  const sMarker = {
+    img: 'public/images_for_weather/start.png', 
+    offsetX: 24,
+    offsetY: 48,
+    width: 48,
+    height: 48
+  };
+
+  const dMarker = {
+    img: 'public/images_for_weather/dest.png',
+   offsetX: 24,
+    offsetY: 48,
+    width: 48,
+    height: 48
+  };
+
 
 //GET "/" & GET "/travel": Render the Travel page when the user accesses the home page.
 exports.travel = (request, response) => {
@@ -126,6 +142,10 @@ exports.travelShow = (request, response) => {
             width: 3
           };
           map.addLine(line);
+          sMarker.coord = [cityDetails[0].lng,cityDetails[0].lat];
+          map.addMarker(sMarker);
+          dMarker.coord = [cityDetails[cityDetails.length-1].lng,cityDetails[cityDetails.length-1].lat]
+          map.addMarker(dMarker);
           await map.render();
           await map.image.save('public/images_for_weather/polyline.png');
           

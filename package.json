@@ -17,6 +17,7 @@
     "fetch": "^1.1.0",
     "node-fetch": "^2.6.7",
     "openweather-apis": "^4.4.2",
+    "sharp": "^0.30.4",
     "staticmaps": "^1.9.1",
     "uuid": "^8.3.2",
     "weather-js": "^2.0.0"

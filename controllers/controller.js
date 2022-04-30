@@ -128,7 +128,7 @@ exports.travelShow = (request, response) => {
           map.addLine(line);
           await map.render();
           await map.image.save('public/images_for_weather/polyline.png');
-
+          
         //Gets weather informationf or each city
         cityFinal = Array(cityDetails.length).fill('a');
         for (let i = 0; i < cityDetails.length; i++) {

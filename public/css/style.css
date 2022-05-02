@@ -56,7 +56,6 @@ input:focus {
 /* Dark Mode Switch */
 /* Switch Created From https://www.w3schools.com/howto/howto_css_switch.asp */
 /* The container around the Switch */
-
 .switch {
     position: relative;
     display: inline-block;

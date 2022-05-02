@@ -2,47 +2,111 @@
     <title>Locus</title>
 </head>
 <body>
-    <h1>C11MATE</h1>
-    <h2><a href="/travel">Travel Mode</a> | <a class="active" href="/locus">Locus Mode</a> | <a href="/compare">Compare Mode</a></h2>
-    <div class="content" id="content">
-        <form method="post" action="/locus">
-            <label for="dLoc">Destination Zip</label><br>
-            <input type="text" id="dLoc" name="dLoc" placeholder="Enter a City or Zip Code Here..."><br>
-            <input type="submit" value="Submit" id="submit">
-        </form>
+<h1>C11MATE</h1>
+<h2><a href="/travel">Travel Mode</a> | <a class="active" href="/locus">Locus Mode</a> | <a href="/compare">Compare
+        Mode</a></h2>
+<div class="content" id="content">
 
-        <% if(locals.areaWeatherData){ %> 
-            <strong><%= areaWeatherData.name %></strong><br><br>
+    <form method="post" action="/locus">
+        <label id="destLabel" for="dLoc">Destination Zip</label><br>
+        <input type="text" id="dLoc" name="dLoc" placeholder="Enter a City or Zip Code Here..."><br>
+        <input type="submit" value="Submit" id="submit">
+    </form>
 
-            <% if(areaWeatherData.weather[0].main == "Clouds") {%> 
-                <strong>Cloudy</strong><img src=""<br><br>
-            <% } else { %> 
-                <strong><%= areaWeatherData.weather[0].main %></strong><br><br>
-                <% if(areaWeatherData.weather[0].main === "")%>
-            <% } %>
-            <strong>Temperature: </strong> <%= (areaWeatherData.main.temp * (9/5) + 32).toFixed(0) %>&deg; F / <%= areaWeatherData.main.temp.toFixed(0) %>&deg; C<br>
-            <strong>Wind Speed:  </strong> <%= areaWeatherData.wind %><br>
-            <strong>Humidity:  </strong> <%= areaWeatherData.main.humidity.toFixed(0) %>&percnt;<br>
-            <strong>Precipitation Chance: </strong> <%= areaWeatherData.rainChance %>%
-        <% } %> 
+    <% if(locals.areaWeatherData){ %>
+        <strong><%= areaWeatherData.name %></strong><br><br>
 
-        <br><br><br>
-
-        <% if(locals.forecastData){ %>
-            <h3>3 - Day Forecast</h3>
-           <% forecastData.forEach(function (forecast){ %>
-                <p>
-                    <strong><%= forecast.shortday %>, <%= forecast.date %></strong> <br><br>
-                        <strong><%= forecast.skytextday %></strong><br>
-                        Low: <%= forecast.low %> / High: <%= forecast.high %><br>
-                        <strong>Precipitation Chance: </strong> <%= forecast.precip %>%
-                        <br><br><br><br><br>
-                </p>
-            <% }); %>            
+        <% if(areaWeatherData.weather[0].main == "Clouds") { %>
+            <strong>Cloudy</strong><img src=""<br><br>
+        <% } else { %>
+            <strong><%= areaWeatherData.weather[0].main %></strong><br><br>
+            <% if(areaWeatherData.weather[0].main === "") %>
         <% } %>
+        <strong>Temperature: </strong> <%= (areaWeatherData.main.temp * (9 / 5) + 32).toFixed(0) %>&deg; F /
+        <%= areaWeatherData.main.temp.toFixed(0) %>&deg; C<br>
+        <strong>Wind Speed: </strong> <%= areaWeatherData.wind %><br>
+        <strong>Humidity: </strong> <%= areaWeatherData.main.humidity.toFixed(0) %>&percnt;<br>
+        <strong>Precipitation Chance: </strong> <%= areaWeatherData.rainChance %>%
+    <% } %>
 
-                     
-    </div>
+    <br><br><br>
+
+    <% if(locals.forecastData){ %>
+        <h3>3 - Day Forecast</h3>
+        <% forecastData.forEach(function (forecast){ %>
+            <p>
+                <strong><%= forecast.shortday %>, <%= forecast.date %></strong> <br><br>
+                <strong><%= forecast.skytextday %></strong><br>
+                Low: <%= forecast.low %> / High: <%= forecast.high %><br>
+                <strong>Precipitation Chance: </strong> <%= forecast.precip %>%
+                <br><br><br><br><br>
+            </p>
+        <% }); %>
+    <% } %>
+
+</div>
+
+<!--Dark Mode Toggle and Code-->
+    <label class="switch">
+        <input type="checkbox" id="darkTrigger">
+        <span class="slider"></span>
+    </label>
+<!-- Local Storage Implementation Based On: https://www.youtube.com/watch?v=wodWDIdV9BY&ab_channel=KevinPowell -->
+<script>
+    var darkBody = document.body;
+    var darkContentDiv = document.getElementById("content");
+    var darkLabel = document.getElementById("destLabel");
+    // Check for previously saved Dark Mode Settings in localStorage
+    let darkBodyStorage = localStorage.getItem('darkModeBody');
+    let darkContentDivStorage = localStorage.getItem('darkModeDiv');
+    let darkLabelStorage = localStorage.getItem('darkModeLabel');
+    // Dark Mode Checkbox Selector
+    const darkModeToggle = document.querySelector('#darkTrigger');
+    //Enable Dark Mode
+    const enableDarkMode = () => {
+        // Enable Dark Mode CSS Features
+        darkBody.classList.add("darkModeBody");
+        darkContentDiv.classList.add("darkModeDiv");
+        darkLabel.classList.add("darkModeLabel");
+        // Update Dark Mode state to localStorage (enabled)
+        localStorage.setItem('darkModeBody', 'enabled');
+        localStorage.setItem('darkModeDiv', 'enabled');
+        localStorage.setItem('darkModeLabel', 'enabled');
+    }
+    //Disable Dark Mode Features
+    const disableDarkMode = () => {
+        // Disable Dark Mode CSS Features
+        darkBody.classList.remove("darkModeBody");
+        darkContentDiv.classList.remove("darkModeDiv");
+        darkLabel.classList.remove("darkModeLabel");
+        // Update Dark Mode state to localStorage (disabled)
+        localStorage.setItem('darkModeBody', 'disabled');
+        localStorage.setItem('darkModeDiv', 'disabled');
+        localStorage.setItem('darkModeLabel', 'disabled');
+    }
+    // If a user has already enabled dark mode on previous visit, enable dark mode
+    if (darkBodyStorage === 'enabled') {
+        enableDarkMode();
+        //Automatically check checkbox slider if Dark Mode is already on
+        darkModeToggle.checked = true;
+    }
+    // Event Listener for Checklist Toggle
+    darkModeToggle.addEventListener('change', () => {
+        // Update Dark Mode Variables on Change
+        darkBodyStorage = localStorage.getItem('darkModeBody');
+        darkContentDivStorage = localStorage.getItem('darkModeDiv');
+        darkLabelStorage = localStorage.getItem('darkModeLabel');
+        // Change Modes
+        // If not enabled, enable
+        if (darkBodyStorage !== 'enabled') {
+            enableDarkMode();
+            // If enabled, disable
+        } else {
+            disableDarkMode();
+        }
+    });
+</script>
+
 </body>
 </html>
 

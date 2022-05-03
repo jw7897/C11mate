@@ -6,10 +6,10 @@
     <h2><a href="/travel" class="active" >Travel Mode</a> | <a href="/locus">Locus Mode</a> | <a href="/compare">Compare Mode</a></h2>
     <div class="content" id="content">
         <form method="post" action="/travel">
-            <label for="sLoc">Starting Zip</label><br>
+            <label id="destLabel" for="sLoc">Starting Zip</label><br>
             <input type="text" id="sLoc" name="sLoc" placeholder="Enter a City or Zip Code Here..."><br>
 
-            <label for="dLoc">Destination Zip</label><br>
+            <label id="destLabel2" for="dLoc">Destination Zip</label><br>
             <input type="text" id="dLoc" name="dLoc" placeholder="Enter a City or Zip Code Here..."><br>
             <input type="submit" value="Submit" id="submit">
         </form>
@@ -26,6 +26,14 @@
             <% } %> 
 
     </div>
+
+    <!--Dark Mode Toggle Switch -->
+    <label class="switch">
+        <input type="checkbox" id="darkTrigger">
+        <span class="slider"></span>
+    </label>
+
 </body>
 </html>
+<script src="js/darkmodeTC.js"></script>
 <!--<script src="js/locus.js"></script>-->

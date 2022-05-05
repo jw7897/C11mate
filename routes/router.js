@@ -15,8 +15,10 @@ router.get("/locus", controller.locus);
 //GET "/compare": Render the Compare page 
 router.get("/compare", controller.compare);
 
+//POST "/locus": Render the Locus page with the API information.
 router.post("/locus", controller.locusShow);
 
+//POST "/travel": Render the Travel page with the API information.
 router.post("/travel", controller.travelShow);
 
 

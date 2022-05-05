@@ -12,32 +12,53 @@
         </form>
 
         <% if(locals.areaWeatherData){ %> 
-            <strong><%= areaWeatherData.name %></strong><br><br>
+            <strong><%= areaWeatherData.observationpoint %></strong><br>
 
-            <% if(areaWeatherData.weather[0].main == "Clouds") {%> 
-                <strong>Cloudy</strong><img src=""<br><br>
-            <% } else { %> 
-                <strong><%= areaWeatherData.weather[0].main %></strong><br><br>
-                <% if(areaWeatherData.weather[0].main === "")%>
-            <% } %>
-            <strong>Temperature: </strong> <%= (areaWeatherData.main.temp * (9/5) + 32).toFixed(0) %>&deg; F / <%= areaWeatherData.main.temp.toFixed(0) %>&deg; C<br>
-            <strong>Wind Speed:  </strong> <%= areaWeatherData.wind %><br>
-            <strong>Humidity:  </strong> <%= areaWeatherData.main.humidity.toFixed(0) %>&percnt;<br>
+            <strong><%= areaWeatherData.date %> </strong><br>
+            <div><%= areaWeatherData.skytext %></div><img src= "<%= areaWeatherData.imageUrl %>"><br>
+            <img src= "/images_for_weather/marker.png"><br>
+            
+
+            <strong>Temperature: </strong> <%= areaWeatherData.temperature %>&deg; F / <%= ((areaWeatherData.temperature - 32) * (5/9)).toFixed(0) %>&deg; C<br>
+            <strong>Wind Speed:  </strong> <%= areaWeatherData.winddisplay %><br>
+            <strong>Humidity:  </strong> <%= areaWeatherData.humidity %>&percnt;<br>
             <strong>Precipitation Chance: </strong> <%= areaWeatherData.rainChance %>%
         <% } %> 
 
-        <br><br><br>
+        <br><br>
 
         <% if(locals.forecastData){ %>
-            <h3>3 - Day Forecast</h3>
+            <hr><h3>3 - Day Forecast </h3><hr>
            <% forecastData.forEach(function (forecast){ %>
                 <p>
-                    <strong><%= forecast.shortday %>, <%= forecast.date %></strong> <br><br>
+                    <strong><u><%= forecast.date %></u></strong> <br>
                         <strong><%= forecast.skytextday %></strong><br>
-                        Low: <%= forecast.low %> / High: <%= forecast.high %><br>
+
+                        <% if (forecast.skytextday === "Clear") { %>
+                            <img src="/images_for_weather/sunny.jpg"><br>
+                        <% }  else if(forecast.skytextday === "Mostly Cloudy"){ %>
+                            <img src="/images_for_weather/partly_cloudy.jpg"><br>
+                        <%}   else if(forecast.skytextday === "Partly Sunny"){ %>
+                            <img src="/images_for_weather/partly_sunny.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Cloudy"){ %>
+                            <img src="/images_for_weather/cloudy.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Rain"){ %>
+                            <img src="/images_for_weather/raining.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Light Rain"){ %>
+                            <img src="/images_for_weather/partly_raining.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Mostly Sunny"){ %>
+                            <img src="/images_for_weather/partly_sunny.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Rain Showers"){ %>
+                            <img src="/images_for_weather/heavy_showers.jpg"><br>
+                        <%}  else if(forecast.skytextday === "Sunny"){ %>
+                            <img src="/images_for_weather/sunny.jpg"><br>
+                        <%}  else if(forecast.skytextday === "T-Storms"){ %>
+                            <img src="/images_for_weather/severe_thunderstorms.jpg"><br>
+                        <%}%>
+                        Low: <%= forecast.low %>&deg; F / High: <%= forecast.high %>&deg; F<br>
                         <strong>Precipitation Chance: </strong> <%= forecast.precip %>%
-                        <br><br><br><br><br>
                 </p>
+                <br><br><br>
             <% }); %>            
         <% } %>
 

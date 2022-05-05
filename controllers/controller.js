@@ -4,6 +4,7 @@ weather.setAPPID(apiKey);
 weather.setLang("en");
 weather.setUnits('metric');
 
+const removeDuplicatesFromArray = require("remove-duplicates-array") //Removes duplicates from an array. 
 const forecast = require("weather-js"); //Node Module used to get the 3 day weather forecast.
 const dateFormat = require("fecha"); //Node Module used to format the date.
 const fetch = require("node-fetch");
@@ -175,3 +176,63 @@ exports.travelShow = (request, response) => {
       });
       return;
   } 
+  
+exports.compareShow = (request, response) => {
+    
+    let cities = Object.values(request.body); //Stores an array of the cities entered.
+    cities = removeDuplicatesFromArray(cities); //Removes duplicate cities or zipcodes from the array.
+    let citiesWeather = [];
+    let weatherMarker1 = {};
+    let weatherMarker2 = {};
+    let weatherMarker3 = {};
+
+    forecast.find({search: cities[0], degreeType: "F"}, (err, data) => {
+        
+        citiesWeather.push(data[0]);
+
+        forecast.find({search: cities[1], degreeType: "F"}, (err, data) => { 
+            citiesWeather.push(data[0]);
+                
+                forecast.find({search: cities[1], degreeType: "F"}, (err, data) => {
+                    citiesWeather.push(data[0]);
+
+                    weatherMarker1 = {
+                        img: citiesWeather[0].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[0].location.long), parseFloat(citiesWeather[0].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    weatherMarker2 = {
+                        img: citiesWeather[1].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[1].location.long), parseFloat(citiesWeather[1].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    weatherMarker3 = {
+                        img: citiesWeather[2].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[2].location.long), parseFloat(citiesWeather[2].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    map.addMarker(weatherMarker1); 
+                    map.addMarker(weatherMarker2); 
+                    map.addMarker(weatherMarker3);
+
+                    async function renderMap (){
+                        await map.render(null, 5);
+                        await map.image.save('public/images_for_weather/compare.png');
+                    };
+
+                    renderMap()
+                    .then(result =>{
+                        return response.render("compare.ejs", {citiesWeather}); 
+                    })
+                    .catch(err => console.log(err))
+            });
+        });
+    });
+
+};

@@ -21,5 +21,8 @@ router.post("/locus", controller.locusShow);
 //POST "/travel": Render the Travel page with the API information.
 router.post("/travel", controller.travelShow);
 
+//POST "/compare": Render the Travel page with the API information.
+router.post("/compare", controller.compareShow);
+
 
 module.exports = router;

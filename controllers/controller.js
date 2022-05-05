@@ -184,13 +184,8 @@ exports.compareShow = (request, response) => {
     let citiesWeather = [];
     let weatherMarker1 = {};
     let weatherMarker2 = {};
-    let weatherMarker3 = {};
 
-    forecast.find({search: cities[0], degreeType: "F"}, (err, data) => {
-        
-        citiesWeather.push(data[0]);
-
-        forecast.find({search: cities[1], degreeType: "F"}, (err, data) => { 
+        forecast.find({search: cities[0], degreeType: "F"}, (err, data) => { 
             citiesWeather.push(data[0]);
                 
                 forecast.find({search: cities[1], degreeType: "F"}, (err, data) => {
@@ -210,16 +205,8 @@ exports.compareShow = (request, response) => {
                         height: 45,
                     };
 
-                    weatherMarker3 = {
-                        img: citiesWeather[2].current.imageUrl,
-                        coord: [parseFloat(citiesWeather[2].location.long), parseFloat(citiesWeather[2].location.lat)],
-                        width: 55,
-                        height: 45,
-                    };
-
                     map.addMarker(weatherMarker1); 
                     map.addMarker(weatherMarker2); 
-                    map.addMarker(weatherMarker3);
 
                     async function renderMap (){
                         await map.render(null, 5);
@@ -233,6 +220,6 @@ exports.compareShow = (request, response) => {
                     .catch(err => console.log(err))
             });
         });
-    });
+    
 
 };

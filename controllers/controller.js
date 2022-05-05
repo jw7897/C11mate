@@ -4,6 +4,7 @@ weather.setAPPID(apiKey);
 weather.setLang("en");
 weather.setUnits('metric');
 
+const removeDuplicatesFromArray = require("remove-duplicates-array") //Removes duplicates from an array. 
 const forecast = require("weather-js"); //Node Module used to get the 3 day weather forecast.
 const dateFormat = require("fecha"); //Node Module used to format the date.
 const fetch = require("node-fetch");
@@ -13,23 +14,24 @@ const options = {
     width: 600,
     height: 400,
   };
-  let map = new StaticMaps(options);
-  const sMarker = {
+
+let map = new StaticMaps(options);
+
+const sMarker = {
     img: 'public/images_for_weather/start.png', 
     offsetX: 24,
     offsetY: 48,
     width: 48,
     height: 48
-  };
+};
 
-  const dMarker = {
+const dMarker = {
     img: 'public/images_for_weather/dest.png',
    offsetX: 24,
     offsetY: 48,
     width: 48,
     height: 48
-  };
-
+};
 
 //GET "/" & GET "/travel": Render the Travel page when the user accesses the home page.
 exports.travel = (request, response) => {
@@ -49,53 +51,61 @@ exports.compare = (request, response) => {
 //POST "/locus": Make a API Call to OpenWeather for the weather in an area.
 exports.locusShow = (request, response) =>{
 
-    let forecastData = []; //Holds an array for the 3-Day forecast 
-    let rainChance;     //Holds the chance of rain to be stored in the returned OpenWeatherAPI object.
-    let wind;       //Holds the wind information to be stored in the returned OpenWeatherAPI object.
-    let dLoc = request.body.dLoc;   //Stores the input from the user.
+    const dLoc = request.body.dLoc;   //Stores the input from the user.
+    let areaWeatherData = null; //Stores the current weather data.
+    let forecastData = null; //Holds an array for the 3-Day forecast
     let dateArray = [];     //Stores the date array returned from the forecast API after the string is split. Example: ["2021", "1", "4"]
-
-    //Makes sure that previous requests information are not kept in weather.
-    weather.setZipCode(null);   
-    weather.setCity("");
-	weather.setCoordinate(null, null);
-	weather.setCityId(null);
-
-    //If the user enters a 5-digit zip code, set the weather to be called to be the zipcode entered. Else, set the city to be returned.
-    if(dLoc.match(/\d{5}/)){
-        weather.setZipCode(dLoc);
-    }else{
-        weather.setCity(dLoc);
-    }
+    let newForecastDate = null;
+    let weatherMarker = {};
 
     //Returns the weather forecast (forecast returns a 1 index array)
     forecast.find({search: dLoc, degreeType: 'F'}, (err, data) => {
 
-        rainChance = data[0].forecast[1].precip; //Stores the current precipitation chance.
-        wind = data[0].current.winddisplay; //Stores the current wind info.
+        areaWeatherData = data[0].current; //Stores the current weather 
+        areaWeatherData.rainChance = data[0].forecast[1].precip;
+        areaWeatherData.observationpoint = data[0].location.name;
+
+        //Makes the current weather date in the 'dddd MMMM Do, YYYY' format. Example: "Friday November 20th, 2015"
+        dateArray = areaWeatherData.date.split("-");
+        newForecastDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
+        areaWeatherData.date = dateFormat.format(newForecastDate, 'dddd MMMM Do, YYYY');
 
         forecastData = [data[0].forecast[2], data[0].forecast[3], data[0].forecast[4]];     //Stores the next three day forecast array.
 
-        //Makes each forecast date in the "MMM Do, YYYY" format. Example: "Nov 30th, 2001"
+        //Makes each forecast date in the "MMM Do, YYYY" format. Example: "Friday November 20th, 2015"
         forecastData.forEach(function(forecast){
 
-            dateArray = forecast.date.split("-"); //
+            dateArray = forecast.date.split("-");
             
-            let newForecastDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
+            newForecastDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
 
-            forecast.date = dateFormat.format(newForecastDate, 'MMM Do, YYYY');
+            forecast.date = dateFormat.format(newForecastDate, 'dddd MMMM Do, YYYY');
 
         });
 
+        weatherMarker = {
+            img: areaWeatherData.imageUrl,
+            coord: [parseFloat(data[0].location.long), parseFloat(data[0].location.lat)],
+            width: 55,
+            height: 45,
+        };   
 
-        weather.getAllWeather(function(err, areaWeatherData){
-            areaWeatherData.rainChance = rainChance;
-            areaWeatherData.wind = wind;
-            response.render("locus.ejs", {areaWeatherData, forecastData});
-        });
+        map.addMarker(weatherMarker); 
+
+        async function renderMap (){
+            await map.render(weatherMarker.coord, 5);
+            await map.image.save('public/images_for_weather/marker.png');
+        };
+
+        renderMap()
+        .then(result =>{
+            return response.render("locus.ejs", {areaWeatherData, forecastData}); 
+        })
+        .catch(err => console.log(err))
+        
     });
+};
 
-}
 
 
 exports.travelShow = (request, response) => {
@@ -148,7 +158,7 @@ exports.travelShow = (request, response) => {
           map.addMarker(dMarker);
           await map.render();
           await map.image.save('public/images_for_weather/polyline.png');
-
+          
         //Gets weather informationf or each city
         cityFinal = Array(cityDetails.length).fill('a');
         for (let i = 0; i < cityDetails.length; i++) {
@@ -165,4 +175,64 @@ exports.travelShow = (request, response) => {
         console.log(err);
       });
       return;
-  }
+  } 
+  
+exports.compareShow = (request, response) => {
+    
+    let cities = Object.values(request.body); //Stores an array of the cities entered.
+    cities = removeDuplicatesFromArray(cities); //Removes duplicate cities or zipcodes from the array.
+    let citiesWeather = [];
+    let weatherMarker1 = {};
+    let weatherMarker2 = {};
+    let weatherMarker3 = {};
+
+    forecast.find({search: cities[0], degreeType: "F"}, (err, data) => {
+        
+        citiesWeather.push(data[0]);
+
+        forecast.find({search: cities[1], degreeType: "F"}, (err, data) => { 
+            citiesWeather.push(data[0]);
+                
+                forecast.find({search: cities[1], degreeType: "F"}, (err, data) => {
+                    citiesWeather.push(data[0]);
+
+                    weatherMarker1 = {
+                        img: citiesWeather[0].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[0].location.long), parseFloat(citiesWeather[0].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    weatherMarker2 = {
+                        img: citiesWeather[1].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[1].location.long), parseFloat(citiesWeather[1].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    weatherMarker3 = {
+                        img: citiesWeather[2].current.imageUrl,
+                        coord: [parseFloat(citiesWeather[2].location.long), parseFloat(citiesWeather[2].location.lat)],
+                        width: 55,
+                        height: 45,
+                    };
+
+                    map.addMarker(weatherMarker1); 
+                    map.addMarker(weatherMarker2); 
+                    map.addMarker(weatherMarker3);
+
+                    async function renderMap (){
+                        await map.render(null, 5);
+                        await map.image.save('public/images_for_weather/compare.png');
+                    };
+
+                    renderMap()
+                    .then(result =>{
+                        return response.render("compare.ejs", {citiesWeather}); 
+                    })
+                    .catch(err => console.log(err))
+            });
+        });
+    });
+
+};

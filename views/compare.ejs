@@ -5,18 +5,33 @@
     <h1>C11MATE</h1>
     <h2><a href="/travel">Travel Mode</a> | <a href="/locus">Locus Mode</a> | <a class="active" href="/compare">Compare Mode</a></h2>
     <div class="content" id="content">
-        <label id="destLabel" for="fZip">First Zip</label><br>
-        <input type="text" id="fZip" name="fZip" placeholder="Enter a Zip Code or City Here..."><br><br>
-        <label id="destLabel2" for="sZip">Second Zip</label><br>
-        <input type="text" id="sZip" name="sZip" placeholder="Enter a Zip Code or City Here..."><br><br>
-        <input type="submit" value="Submit" id="submit">
+        <form id="citiesForm" method="POST" action="/compare">
+
+            <label id="destLabel" for="1Zip">First City or Zip</label><br>
+            <input type="text" id="1Zip" name="1Zip" placeholder="Enter a Zip Code or City Here..."><br><br>
+
+            <label id="destLabel2" for="2Zip">Second City or Zip</label><br>
+            <input type="text" id="2Zip" name="2Zip" placeholder="Enter a Zip Code or City Here..." ><br><br>
+
+            <label id="destLabel3" for="3Zip">Third City or Zip</label><br>
+            <input type="text" id="3Zip" name="3Zip" placeholder="Enter a Zip Code or City Here..."><br><br>
+
+            <input type="submit" value="Submit" id="submit">
+        </form>
+
+        <% if(locals.citiesWeather){ %>
+            <img src="images_for_weather\compare.png"><br>
+            <% citiesWeather.forEach(city => { %>
+                <strong><%= city.location.name %></strong><br>
+                <strong><%= city.current.skytext %></strong><img src="<%= city.current.imageUrl %>"><br>
+                <strong>Temperature:</strong> <%= city.current.temperature %> &deg; F / <%= ((city.current.temperature - 32) * (5/9)).toFixed(0) %>&deg; C<br>
+                <strong>Precipitation Chance: </strong> <%= city.forecast[1].precip %>&percnt;
+                <br><br><br><br>
+            <% }) %>
+        <% } %>
     </div>
 
-    <div class="fZipInfo" id="fZipInfo">
-    </div>
-
-    <div class="sZipInfo" id="sZipInfo">
-    </div>
+     
 
     <!--Dark Mode Toggle Switch -->
     <label class="switch">
@@ -27,4 +42,3 @@
 </body>
 </html>
 <script src="js/darkmodeTC.js"></script>
-<!--<script src="js/compare.js"></script>-->
